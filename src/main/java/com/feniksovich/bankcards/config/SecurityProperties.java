@@ -1,26 +1,28 @@
 package com.feniksovich.bankcards.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 import java.time.Duration;
 
 @ConfigurationProperties(prefix = "security")
 public class SecurityProperties {
 
-    private final TokenProperties accessTokenProperties;
-    private final TokenProperties refreshTokenProperties;
+    private final TokenProperties accessToken;
+    private final TokenProperties refreshToken;
 
+    @ConstructorBinding
     public SecurityProperties(TokenProperties accessToken, TokenProperties refreshToken) {
-        this.accessTokenProperties = accessToken;
-        this.refreshTokenProperties = refreshToken;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     public TokenProperties accessToken() {
-        return accessTokenProperties;
+        return accessToken;
     }
 
     public TokenProperties refreshToken() {
-        return refreshTokenProperties;
+        return refreshToken;
     }
 
     public record TokenProperties(
