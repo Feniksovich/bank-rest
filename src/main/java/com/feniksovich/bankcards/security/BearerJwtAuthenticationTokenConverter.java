@@ -31,7 +31,7 @@ public class BearerJwtAuthenticationTokenConverter implements AuthenticationConv
     public Authentication convert(HttpServletRequest request) {
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authorization != null && authorization.startsWith(BEARER_SCHEMA_HEAD)) {
-            final String token = authorization.substring(BEARER_SCHEMA_HEAD.length());
+            final String token = authorization.substring(BEARER_SCHEMA_HEAD.length()).trim();
 
             final JwtToken accessToken = accessTokenDeserializer.deserialize(token);
             if (accessToken != null) {
