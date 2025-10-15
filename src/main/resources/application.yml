@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ${APP_NAME}
+  jpa:
+    database: postgresql
+    generate-ddl: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://db:5432/${POSTGRES_DB}?currentSchema=public
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+security:
+  access-token:
+    jwk: ${ACCESS_TOKEN_JWK}
+    expiration: ${ACCESS_TOKEN_EXPIRATION}
+  refresh-token:
+    jwk: ${REFRESH_TOKEN_JWK}
+    expiration: ${REFRESH_TOKEN_EXPIRATION}
