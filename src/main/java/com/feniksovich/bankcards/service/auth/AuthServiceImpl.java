@@ -1,8 +1,8 @@
-package com.feniksovich.bankcards.service;
+package com.feniksovich.bankcards.service.auth;
 
 import com.feniksovich.bankcards.dto.TokensPairResponse;
-import com.feniksovich.bankcards.dto.user.SignInRequest;
-import com.feniksovich.bankcards.dto.user.SignUpRequest;
+import com.feniksovich.bankcards.dto.auth.SignInRequest;
+import com.feniksovich.bankcards.dto.auth.SignUpRequest;
 import com.feniksovich.bankcards.entity.User;
 import com.feniksovich.bankcards.security.JwtAuthenticationToken;
 import com.feniksovich.bankcards.security.JwtToken;
@@ -11,6 +11,7 @@ import com.feniksovich.bankcards.security.factory.AccessTokenFactory;
 import com.feniksovich.bankcards.security.factory.RefreshTokenFactory;
 import com.feniksovich.bankcards.security.serialization.AccessTokenSerializer;
 import com.feniksovich.bankcards.security.serialization.RefreshTokenSerializer;
+import com.feniksovich.bankcards.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokensPairResponse signUp(SignUpRequest request) {
-        final User user = userService.createUser(request);
+        final User user = userService.register(request);
         final UserPrincipal principal = UserPrincipal.of(user);
         return issueTokensPair(principal);
     }

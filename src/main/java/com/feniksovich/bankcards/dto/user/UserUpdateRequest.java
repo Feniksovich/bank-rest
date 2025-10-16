@@ -1,4 +1,4 @@
 package com.feniksovich.bankcards.dto.user;
 
-public class SignOutRequest {
+public class UserUpdateRequest {
 }

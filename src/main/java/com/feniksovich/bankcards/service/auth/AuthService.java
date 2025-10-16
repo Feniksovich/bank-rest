@@ -1,8 +1,8 @@
-package com.feniksovich.bankcards.service;
+package com.feniksovich.bankcards.service.auth;
 
 import com.feniksovich.bankcards.dto.TokensPairResponse;
-import com.feniksovich.bankcards.dto.user.SignInRequest;
-import com.feniksovich.bankcards.dto.user.SignUpRequest;
+import com.feniksovich.bankcards.dto.auth.SignInRequest;
+import com.feniksovich.bankcards.dto.auth.SignUpRequest;
 
 public interface AuthService {
     TokensPairResponse signUp(SignUpRequest request);

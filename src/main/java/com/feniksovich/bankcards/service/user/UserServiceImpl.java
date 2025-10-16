@@ -1,0 +1,86 @@
+package com.feniksovich.bankcards.service.user;
+
+import com.feniksovich.bankcards.dto.user.UserData;
+import com.feniksovich.bankcards.dto.auth.SignUpRequest;
+import com.feniksovich.bankcards.dto.user.UserUpdateRequest;
+import com.feniksovich.bankcards.entity.User;
+import com.feniksovich.bankcards.repository.UserRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.UUID;
+import java.util.function.Supplier;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper;
+
+    private static final Supplier<ResponseStatusException> NOT_FOUND_EXCEPTION =
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+
+    @Autowired
+    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
+        this.modelMapper = modelMapper;
+    }
+
+    @Transactional
+    public User register(SignUpRequest request) {
+        if (repository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User with specified phone number already exists");
+        }
+
+        // Hash the password before saving
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
+        final User user = modelMapper.map(request, User.class);
+        return repository.save(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserData getById(UUID id) {
+        return repository.findById(id)
+                .map(user -> modelMapper.map(user, UserData.class))
+                .orElseThrow(NOT_FOUND_EXCEPTION);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserData getByPhoneNumber(String phoneNumber) {
+        return repository.findByPhoneNumber(phoneNumber)
+                .map(user -> modelMapper.map(user, UserData.class))
+                .orElseThrow(NOT_FOUND_EXCEPTION);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserData> getAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(user -> modelMapper.map(user, UserData.class));
+    }
+
+    @Override
+    @Transactional
+    public void updateById(UUID id, UserUpdateRequest request) {
+        final User user = repository.findById(id).orElseThrow(NOT_FOUND_EXCEPTION);
+        modelMapper.map(request, user);
+        repository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(UUID id) {
+        repository.deleteById(id);
+    }
+}

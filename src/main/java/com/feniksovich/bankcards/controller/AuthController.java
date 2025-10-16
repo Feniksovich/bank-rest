@@ -1,18 +1,20 @@
 package com.feniksovich.bankcards.controller;
 
 import com.feniksovich.bankcards.dto.TokensPairResponse;
-import com.feniksovich.bankcards.dto.user.SignInRequest;
-import com.feniksovich.bankcards.dto.user.SignUpRequest;
-import com.feniksovich.bankcards.service.AuthService;
+import com.feniksovich.bankcards.dto.auth.SignInRequest;
+import com.feniksovich.bankcards.dto.auth.SignUpRequest;
+import com.feniksovich.bankcards.service.auth.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
-@RequestMapping(value = "api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthController {
 
     private final AuthService authService;
