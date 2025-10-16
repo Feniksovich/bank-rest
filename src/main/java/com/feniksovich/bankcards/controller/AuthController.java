@@ -37,8 +37,8 @@ public class AuthController {
     @PostMapping("/signout")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('jwt:signout')")
-    public void signOut(@RequestParam(required = false, defaultValue = "false") boolean everywhere) {
-        authService.signOut(everywhere);
+    public void signOut(@RequestParam(required = false, defaultValue = "false") boolean globally) {
+        authService.signOut(globally);
     }
 
     @PostMapping("/tokens")
