@@ -1,7 +1,6 @@
 package com.feniksovich.bankcards.security;
 
-import com.feniksovich.bankcards.service.UserRefreshTokenService;
-import com.feniksovich.bankcards.service.UserService;
+import com.feniksovich.bankcards.service.auth.UserRefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,15 +12,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
-    private final UserService userService;
+    private final ExtendedUserDetailsService userDetailsService;
     private final UserRefreshTokenService userRefreshTokenService;
 
     @Autowired
     public JwtAuthenticationProvider(
-            UserService userService,
+            ExtendedUserDetailsService userDetailsService,
             UserRefreshTokenService userRefreshTokenService
     ) {
-        this.userService = userService;
+        this.userDetailsService = userDetailsService;
         this.userRefreshTokenService = userRefreshTokenService;
     }
 
@@ -37,11 +36,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Token invalid");
         }
 
-        /*
-        There is an option to define ExtendedUserDetailsService with additional method
-        loadUserById(UUID) to keep similar logic together and use it here instead of UserService.
-         */
-        final UserPrincipal principal = UserPrincipal.of(userService.retrieveUserById(jwtToken.userId()));
+        final UserPrincipal principal = (UserPrincipal) userDetailsService.loadUserById(jwtToken.userId());
         return JwtAuthenticationToken.authenticated(jwtToken, principal);
     }
 
