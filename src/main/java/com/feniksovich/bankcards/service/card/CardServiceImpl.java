@@ -1,0 +1,137 @@
+package com.feniksovich.bankcards.service.card;
+
+import com.feniksovich.bankcards.dto.card.CardData;
+import com.feniksovich.bankcards.dto.card.TransactionRequest;
+import com.feniksovich.bankcards.entity.Card;
+import com.feniksovich.bankcards.entity.CardStatus;
+import com.feniksovich.bankcards.exception.CardNotFoundException;
+import com.feniksovich.bankcards.exception.CardOperationException;
+import com.feniksovich.bankcards.repository.CardRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class CardServiceImpl implements CardService {
+
+    private final CardRepository cardRepository;
+    private final ModelMapper modelMapper;
+
+    @Autowired
+    public CardServiceImpl(CardRepository cardRepository, ModelMapper modelMapper) {
+        this.cardRepository = cardRepository;
+        this.modelMapper = modelMapper;
+    }
+
+    @Override
+    public CardData create(UUID userId) {
+        return null;
+    }
+
+    @Override
+    public Page<CardData> getAll(Pageable pageable) {
+        return cardRepository.findAll(pageable)
+                .map(card -> modelMapper.map(card, CardData.class));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CardData> getAllByUserId(UUID userId, Pageable pageable) {
+        return cardRepository.findAllByUserId(userId, pageable)
+                .map(card -> modelMapper.map(card, CardData.class));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CardData getByPanLast4(UUID userId, String panLast4) {
+        final Card card = findByUserIdAndPanLast4OrThrow(userId, panLast4);
+        return modelMapper.map(card, CardData.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CardData getById(UUID userId, UUID cardId) {
+        final Card card = findByUserIdAndCardIdOrThrow(userId, cardId);
+        return modelMapper.map(card, CardData.class);
+    }
+
+    @Override
+    @Transactional
+    public void setStatusById(UUID userId, UUID cardId, CardStatus status) {
+        final Card card = findByUserIdAndCardIdOrThrow(userId, cardId);
+
+        if (card.getStatus() == status) {
+            return;
+        }
+
+        card.setStatus(status);
+        cardRepository.save(card);
+    }
+
+    @Override
+    @Transactional
+    public void setStatusByPanLast4(UUID userId, String panLast4, CardStatus status) {
+        final Card card = findByUserIdAndPanLast4OrThrow(userId, panLast4);
+
+        if (card.getStatus() == status) {
+            return;
+        }
+
+        card.setStatus(status);
+        cardRepository.save(card);
+    }
+
+    @Override
+    @Transactional
+    public void performTransaction(UUID userId, TransactionRequest request) {
+        final Card fromCard = findByUserIdAndPanLast4OrThrow(userId, request.getFromPanLast4());
+        final Card toCard = findByUserIdAndPanLast4OrThrow(userId, request.getToPanLast4());
+        final BigDecimal amount = request.getAmount();
+
+        validateTransaction(fromCard, toCard, amount);
+
+        fromCard.setBalance(fromCard.getBalance().subtract(amount));
+        toCard.setBalance(toCard.getBalance().add(amount));
+        cardRepository.saveAll(List.of(fromCard, toCard));
+    }
+
+    @Override
+    public void deleteByPanLast4(UUID userId, String panLast4) {
+
+    }
+
+    private Card findByUserIdAndPanLast4OrThrow(UUID userId, String panLast4) {
+        return cardRepository.findByUserIdAndPanLast4(userId, panLast4)
+                .orElseThrow(() -> new CardNotFoundException("Card not found with last 4 pan specified"));
+    }
+
+    private Card findByUserIdAndCardIdOrThrow(UUID userId, UUID cardId) {
+        return cardRepository.findByUserIdAndId(userId, cardId)
+                .orElseThrow(() -> new CardNotFoundException("Card not found with id specified"));
+    }
+
+    private static void validateTransaction(Card fromCard, Card toCard, BigDecimal amount) {
+        if (fromCard.getId().equals(toCard.getId())) {
+            throw new CardOperationException("Cannot transfer to the same card");
+        }
+
+        if (fromCard.getStatus() != CardStatus.ACTIVE) {
+            throw new CardOperationException("Source card is not active");
+        }
+
+        if (toCard.getStatus() != CardStatus.ACTIVE) {
+            throw new CardOperationException("Destination card is not active");
+        }
+
+        if (fromCard.getBalance().subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
+            throw new CardOperationException("The card is not enough funds");
+        }
+    }
+}
