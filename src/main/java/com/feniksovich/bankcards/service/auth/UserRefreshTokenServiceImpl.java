@@ -1,4 +1,4 @@
-package com.feniksovich.bankcards.service;
+package com.feniksovich.bankcards.service.auth;
 
 import com.feniksovich.bankcards.entity.UserRefreshToken;
 import com.feniksovich.bankcards.repository.UserRefreshTokenRepository;
