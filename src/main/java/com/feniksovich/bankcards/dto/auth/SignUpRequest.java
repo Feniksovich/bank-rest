@@ -10,19 +10,19 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class SignUpRequest {
-    @NotBlank
+    @NotBlank(message = "Last name is required")
     @Size(min = 2, max = 64)
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "First name is required")
     @Size(min = 2, max = 64)
     private String firstName;
 
-    @NotBlank
-    @Pattern(regexp = RegexPatterns.PHONE_NUMBER)
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = RegexPatterns.PHONE_NUMBER, message = "Invalid phone number format")
     private String phoneNumber;
 
-    @NotBlank
+    @NotBlank(message = "Password is required")
     @Size(min = 12, max = 64)
     private String password;
 }

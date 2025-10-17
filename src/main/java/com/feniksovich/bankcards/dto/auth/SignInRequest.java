@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class SignInRequest {
-    @NotBlank
-    @Pattern(regexp = RegexPatterns.PHONE_NUMBER)
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = RegexPatterns.PHONE_NUMBER, message = "Invalid phone number format")
     private String phoneNumber;
 
-    @NotBlank
+    @NotBlank(message = "Password is required")
     private String password;
 }

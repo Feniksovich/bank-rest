@@ -11,6 +11,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CardCreateRequest {
-    @NotNull
+    @NotNull(message = "User ID is required")
     private UUID userId;
 }
