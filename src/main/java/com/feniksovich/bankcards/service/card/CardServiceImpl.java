@@ -3,9 +3,14 @@ package com.feniksovich.bankcards.service.card;
 import com.feniksovich.bankcards.dto.card.CardData;
 import com.feniksovich.bankcards.dto.card.TransactionRequest;
 import com.feniksovich.bankcards.entity.Card;
+import com.feniksovich.bankcards.entity.User;
 import com.feniksovich.bankcards.exception.CardOperationException;
 import com.feniksovich.bankcards.exception.ResourceNotFoundException;
 import com.feniksovich.bankcards.repository.CardRepository;
+import com.feniksovich.bankcards.repository.UserRepository;
+import com.feniksovich.bankcards.security.crypto.CryptoService;
+import com.feniksovich.bankcards.util.CardUtil;
+import com.feniksovich.bankcards.util.TransliterationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,14 +28,23 @@ import java.util.function.Supplier;
 public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
+    private final UserRepository userRepository;
+    private final CryptoService cryptoService;
     private final ModelMapper modelMapper;
 
     private static final Supplier<ResourceNotFoundException> NOT_FOUND_EXCEPTION =
             () -> new ResourceNotFoundException("Card not found");
 
     @Autowired
-    public CardServiceImpl(CardRepository cardRepository, ModelMapper modelMapper) {
+    public CardServiceImpl(
+            CardRepository cardRepository,
+            UserRepository userRepository,
+            CryptoService cryptoService,
+            ModelMapper modelMapper
+    ) {
         this.cardRepository = cardRepository;
+        this.userRepository = userRepository;
+        this.cryptoService = cryptoService;
         this.modelMapper = modelMapper;
     }
 
@@ -45,8 +59,27 @@ public class CardServiceImpl implements CardService {
     @Override
     @Transactional
     public CardData create(UUID userId) {
-        //TODO
-        return null;
+        final User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        final String pan = generateUniquePanSafely(userId, 5);
+        final String panLast4 = pan.substring(pan.length() - 4);
+        final String encryptedPan = cryptoService.encrypt(pan);
+        final String cardHolder = TransliterationUtil.transliterate(
+                String.format("%s %s", user.getLastName(), user.getFirstName())
+        ).toUpperCase();
+        final LocalDate expiresAt = LocalDate.now().withDayOfMonth(1).plusYears(5);
+
+        final Card card = Card.builder()
+                .user(user)
+                .panEncrypted(encryptedPan)
+                .panLast4(panLast4)
+                .cardHolder(cardHolder)
+                .expiresAt(expiresAt)
+                .balance(BigDecimal.ZERO)
+                .build();
+
+        return modelMapper.map(cardRepository.save(card), CardData.class);
     }
 
     @Override
@@ -109,6 +142,21 @@ public class CardServiceImpl implements CardService {
         fromCard.setBalance(fromCard.getBalance().subtract(amount));
         toCard.setBalance(toCard.getBalance().add(amount));
         cardRepository.saveAll(List.of(fromCard, toCard));
+    }
+
+    private String generateUniquePanSafely(UUID userId, int maxAttempts) {
+        for (int i = 0; i < maxAttempts; i++) {
+            final String pan = CardUtil.generateCardPan();
+            final String panLast4 = pan.substring(pan.length() - 4);
+
+            if (cardRepository.existsByUserIdAndPanLast4(userId, panLast4)) {
+                continue;
+            }
+
+            return pan;
+        }
+
+        throw new IllegalStateException("Failed to generate unique card PAN after maximum attempts");
     }
 
     private Card findByUserIdAndPanLast4OrThrow(UUID userId, String panLast4) {

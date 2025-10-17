@@ -12,4 +12,6 @@ public interface CardRepository extends JpaRepository<Card, UUID> {
     Page<Card> findAllByUserId(UUID userId, Pageable pageable);
     Optional<Card> findByUserIdAndId(UUID userId, UUID cardId);
     Optional<Card> findByUserIdAndPanLast4(UUID userId, String panLast4);
+
+    boolean existsByUserIdAndPanLast4(UUID userId, String panLast4);
 }
