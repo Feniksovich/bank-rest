@@ -4,6 +4,8 @@ import com.feniksovich.bankcards.entity.Role;
 import com.feniksovich.bankcards.security.BearerJwtAuthenticationTokenConverter;
 import com.feniksovich.bankcards.security.ExtendedUserDetailsService;
 import com.feniksovich.bankcards.security.JwtAuthenticationProvider;
+import com.feniksovich.bankcards.security.crypto.AesGcmCryptoService;
+import com.feniksovich.bankcards.security.crypto.CryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,9 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
 @Configuration
 @EnableWebSecurity
@@ -57,7 +62,7 @@ public class SecurityConfigurer {
                         configurer.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 )
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/account/**").hasRole(Role.USER.name());
+                    registry.requestMatchers("/account/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name());
                     registry.requestMatchers("/cards/**").hasRole(Role.ADMIN.name());
                     registry.requestMatchers("/users/**").hasRole(Role.ADMIN.name());
                     registry.anyRequest().permitAll();
@@ -83,5 +88,13 @@ public class SecurityConfigurer {
 
         // Register along with JWT authentication provider
         return new ProviderManager(daoAuthenticationProvider, jwtAuthenticationProvider);
+    }
+
+    @Bean
+    public CryptoService cryptoService(SecurityProperties securityProperties) {
+        final String aesKeyBase64 = securityProperties.crypto().aesKeyBase64();
+        final byte[] aesKeyBytes = Base64.getDecoder().decode(aesKeyBase64);
+        final SecretKeySpec aesKey = new SecretKeySpec(aesKeyBytes, "AES");
+        return new AesGcmCryptoService(aesKey);
     }
 }

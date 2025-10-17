@@ -40,7 +40,7 @@ public class CorsConfigurer {
         final CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOriginPatterns(ALLOWED_ORIGINS);
-        configuration .setAllowedMethods(ALLOWED_METHODS.stream().map(HttpMethod::name).toList());
+        configuration.setAllowedMethods(ALLOWED_METHODS.stream().map(HttpMethod::name).toList());
         configuration.setAllowedHeaders(ALLOWED_HEADERS);
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(PREFLIGHT_MAX_AGE.toSeconds());

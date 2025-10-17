@@ -23,3 +23,5 @@ security:
   refresh-token:
     jwk: ${REFRESH_TOKEN_JWK}
     expiration: ${REFRESH_TOKEN_EXPIRATION}
+  crypto:
+    aes-key-base64: ${AES_KEY_BASE64}
