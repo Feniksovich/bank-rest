@@ -5,6 +5,7 @@ import com.feniksovich.bankcards.repository.UserRefreshTokenRepository;
 import com.feniksovich.bankcards.security.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class UserRefreshTokenServiceImpl implements UserRefreshTokenService {
     }
 
     @Override
+    @Transactional
     public void track(JwtToken jwtToken) {
         final UserRefreshToken userRefreshToken = new UserRefreshToken(
                 jwtToken.userId(),
@@ -29,16 +31,19 @@ public class UserRefreshTokenServiceImpl implements UserRefreshTokenService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isTracked(JwtToken jwtToken) {
         return repository.existsById(jwtToken.id());
     }
 
     @Override
+    @Transactional
     public void invalidate(JwtToken jwtToken) {
         repository.deleteById(jwtToken.id());
     }
 
     @Override
+    @Transactional
     public void invalidateAll(UUID userId) {
         repository.deleteAllByUserId(userId);
     }

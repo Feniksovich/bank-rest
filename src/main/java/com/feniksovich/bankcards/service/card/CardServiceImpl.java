@@ -3,17 +3,15 @@ package com.feniksovich.bankcards.service.card;
 import com.feniksovich.bankcards.dto.card.CardData;
 import com.feniksovich.bankcards.dto.card.TransactionRequest;
 import com.feniksovich.bankcards.entity.Card;
-import com.feniksovich.bankcards.exception.ResourceNotFoundException;
 import com.feniksovich.bankcards.exception.CardOperationException;
+import com.feniksovich.bankcards.exception.ResourceNotFoundException;
 import com.feniksovich.bankcards.repository.CardRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,8 +34,8 @@ public class CardServiceImpl implements CardService {
         this.modelMapper = modelMapper;
     }
 
-
     @Override
+    @Transactional(readOnly = true)
     public CardData getById(UUID cardId) {
         return cardRepository.findById(cardId)
                 .map(card -> modelMapper.map(card, CardData.class))
@@ -45,6 +43,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
+    @Transactional
     public CardData create(UUID userId) {
         //TODO
         return null;
@@ -63,6 +62,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<CardData> getAll(Pageable pageable) {
         return cardRepository.findAll(pageable)
                 .map(card -> modelMapper.map(card, CardData.class));
@@ -76,6 +76,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CardData getOwnById(UUID userId, UUID cardId) {
         return cardRepository.findByUserIdAndId(userId, cardId)
                 .map(card -> modelMapper.map(card, CardData.class))
@@ -83,12 +84,14 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<CardData> getAllOwned(UUID userId, Pageable pageable) {
         return cardRepository.findAllByUserId(userId, pageable)
                 .map(card -> modelMapper.map(card, CardData.class));
     }
 
     @Override
+    @Transactional
     public void setBlockedOwnById(UUID userId, UUID cardId, boolean blocked) {
         final Card card = cardRepository.findByUserIdAndId(userId, cardId).orElseThrow(NOT_FOUND_EXCEPTION);
         setBlocked(card, blocked);
