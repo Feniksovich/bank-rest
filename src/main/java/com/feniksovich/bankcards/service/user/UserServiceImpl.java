@@ -4,6 +4,8 @@ import com.feniksovich.bankcards.dto.auth.SignUpRequest;
 import com.feniksovich.bankcards.dto.user.UserData;
 import com.feniksovich.bankcards.dto.user.UserUpdateRequest;
 import com.feniksovich.bankcards.entity.User;
+import com.feniksovich.bankcards.exception.ResourceConflictException;
+import com.feniksovich.bankcards.exception.ResourceNotFoundException;
 import com.feniksovich.bankcards.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +27,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
-    private static final Supplier<ResponseStatusException> NOT_FOUND_EXCEPTION =
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+    private static final Supplier<ResourceNotFoundException> NOT_FOUND_EXCEPTION =
+            () -> new ResourceNotFoundException("User not found");
 
     @Autowired
     public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
@@ -38,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User register(SignUpRequest request) {
         if (repository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User with specified phone number already exists");
+            throw new ResourceConflictException("User with specified phone number already exists");
         }
 
         // Hash the password before saving

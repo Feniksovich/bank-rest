@@ -3,7 +3,7 @@ package com.feniksovich.bankcards.service.card;
 import com.feniksovich.bankcards.dto.card.CardData;
 import com.feniksovich.bankcards.dto.card.TransactionRequest;
 import com.feniksovich.bankcards.entity.Card;
-import com.feniksovich.bankcards.exception.CardNotFoundException;
+import com.feniksovich.bankcards.exception.ResourceNotFoundException;
 import com.feniksovich.bankcards.exception.CardOperationException;
 import com.feniksovich.bankcards.repository.CardRepository;
 import org.modelmapper.ModelMapper;
@@ -27,8 +27,8 @@ public class CardServiceImpl implements CardService {
     private final CardRepository cardRepository;
     private final ModelMapper modelMapper;
 
-    private static final Supplier<ResponseStatusException> NOT_FOUND_EXCEPTION =
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found");
+    private static final Supplier<ResourceNotFoundException> NOT_FOUND_EXCEPTION =
+            () -> new ResourceNotFoundException("Card not found");
 
     @Autowired
     public CardServiceImpl(CardRepository cardRepository, ModelMapper modelMapper) {
@@ -110,12 +110,7 @@ public class CardServiceImpl implements CardService {
 
     private Card findByUserIdAndPanLast4OrThrow(UUID userId, String panLast4) {
         return cardRepository.findByUserIdAndPanLast4(userId, panLast4)
-                .orElseThrow(() -> new CardNotFoundException("Card not found with last 4 pan specified"));
-    }
-
-    private Card findByUserIdAndCardIdOrThrow(UUID userId, UUID cardId) {
-        return cardRepository.findByUserIdAndId(userId, cardId)
-                .orElseThrow(() -> new CardNotFoundException("Card not found with id specified"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card not found with last 4 pan specified"));
     }
 
     private void setBlocked(Card card, boolean state) {
