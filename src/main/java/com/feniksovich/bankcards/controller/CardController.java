@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +16,7 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping(value = "/cards", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("/cards")
 public class CardController {
 
     private final CardService cardService;
@@ -27,25 +26,25 @@ public class CardController {
         this.cardService = cardService;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<CardData> getAllCards(@PageableDefault Pageable pageable) {
         return cardService.getAll(pageable);
     }
 
-    @GetMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     public Page<CardData> searchCardsByUserId(@RequestParam UUID userId, @PageableDefault Pageable pageable) {
         return cardService.getAllOwned(userId, pageable);
     }
 
-    @GetMapping(path = "/{cardId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/{cardId}")
     @ResponseStatus(HttpStatus.OK)
     public CardData getCard(@PathVariable UUID cardId) {
         return cardService.getById(cardId);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CardData createCard(@RequestBody @Valid CardCreateRequest request) {
         return cardService.create(request.getUserId());

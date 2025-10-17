@@ -7,14 +7,13 @@ import com.feniksovich.bankcards.service.auth.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
-@RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -24,13 +23,13 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public AuthResponse signUp(@RequestBody @Valid SignUpRequest request) {
         return authService.signUp(request);
     }
 
-    @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/signin")
     @ResponseStatus(HttpStatus.OK)
     public AuthResponse signIn(@RequestBody @Valid SignInRequest request) {
         return authService.signIn(request);

@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,7 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping(value = "/account", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("/account")
 public class AccountController {
 
     private final UserService userService;
@@ -36,13 +35,13 @@ public class AccountController {
 
     // User profile management API
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public UserData getUser(@AuthenticationPrincipal UserPrincipal principal) {
         return userService.getById(principal.getId());
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping
     public void updateUser(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody @Valid UserUpdateRequest request
@@ -52,7 +51,7 @@ public class AccountController {
 
     // User cards management API
 
-    @GetMapping(path = "/cards", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/cards")
     @ResponseStatus(HttpStatus.OK)
     public Page<CardData> getCards(
             @AuthenticationPrincipal UserPrincipal principal,
@@ -61,7 +60,7 @@ public class AccountController {
         return cardService.getAllOwned(principal.getId(), pageable);
     }
 
-    @GetMapping(path = "/cards/{cardId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/cards/{cardId}")
     @ResponseStatus(HttpStatus.OK)
     public CardData getCard(
             @AuthenticationPrincipal UserPrincipal principal,
@@ -70,7 +69,7 @@ public class AccountController {
         return cardService.getOwnById(principal.getId(), cardId);
     }
 
-    @PostMapping(path = "/cards/{cardId}/block", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/cards/{cardId}/block")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void blockCard(
             @AuthenticationPrincipal UserPrincipal principal,
@@ -79,11 +78,7 @@ public class AccountController {
         cardService.setBlockedOwnById(principal.getId(), cardId, true);
     }
 
-    @PostMapping(
-            path = "/transaction",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(path = "/transaction")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void performTransaction(
             @AuthenticationPrincipal UserPrincipal principal,
