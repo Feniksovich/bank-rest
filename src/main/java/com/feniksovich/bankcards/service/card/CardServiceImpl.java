@@ -117,17 +117,26 @@ public class CardServiceImpl implements CardService {
                 .orElseThrow(() -> new CardNotFoundException("Card not found with id specified"));
     }
 
+    private void setBlocked(Card card, boolean state) {
+        if (card.isBlocked() == state) {
+            return;
+        }
+        card.setBlocked(state);
+        cardRepository.save(card);
+    }
+
     private static void validateTransaction(Card fromCard, Card toCard, BigDecimal amount) {
         if (fromCard.getId().equals(toCard.getId())) {
             throw new CardOperationException("Cannot transfer to the same card");
         }
 
-        if (fromCard.getStatus() != CardStatus.ACTIVE) {
-            throw new CardOperationException("Source card is not active");
+        if (fromCard.isBlocked() || toCard.isBlocked()) {
+            throw new CardOperationException("One of the cards is blocked");
         }
 
-        if (toCard.getStatus() != CardStatus.ACTIVE) {
-            throw new CardOperationException("Destination card is not active");
+        final LocalDate now = LocalDate.now();
+        if (toCard.getExpiresAt().isBefore(now) || fromCard.getExpiresAt().isBefore(now)) {
+            throw new CardOperationException("One of the cards is expired");
         }
 
         if (fromCard.getBalance().subtract(amount).compareTo(BigDecimal.ZERO) < 0) {

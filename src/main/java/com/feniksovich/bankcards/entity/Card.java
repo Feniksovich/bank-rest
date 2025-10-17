@@ -39,8 +39,8 @@ public class Card {
     private BigDecimal balance = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private CardStatus status;
+    @Column(name = "blocked", nullable = false)
+    private boolean blocked = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_cards_user"))
