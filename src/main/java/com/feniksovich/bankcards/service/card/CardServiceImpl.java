@@ -3,7 +3,6 @@ package com.feniksovich.bankcards.service.card;
 import com.feniksovich.bankcards.dto.card.CardData;
 import com.feniksovich.bankcards.dto.card.TransactionRequest;
 import com.feniksovich.bankcards.entity.Card;
-import com.feniksovich.bankcards.entity.CardStatus;
 import com.feniksovich.bankcards.exception.CardNotFoundException;
 import com.feniksovich.bankcards.exception.CardOperationException;
 import com.feniksovich.bankcards.repository.CardRepository;
@@ -11,12 +10,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Service
 public class CardServiceImpl implements CardService {
@@ -24,15 +27,39 @@ public class CardServiceImpl implements CardService {
     private final CardRepository cardRepository;
     private final ModelMapper modelMapper;
 
+    private static final Supplier<ResponseStatusException> NOT_FOUND_EXCEPTION =
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found");
+
     @Autowired
     public CardServiceImpl(CardRepository cardRepository, ModelMapper modelMapper) {
         this.cardRepository = cardRepository;
         this.modelMapper = modelMapper;
     }
 
+
+    @Override
+    public CardData getById(UUID cardId) {
+        return cardRepository.findById(cardId)
+                .map(card -> modelMapper.map(card, CardData.class))
+                .orElseThrow(NOT_FOUND_EXCEPTION);
+    }
+
     @Override
     public CardData create(UUID userId) {
+        //TODO
         return null;
+    }
+
+    @Override
+    @Transactional
+    public void delete(UUID cardId) {
+        final Card card = cardRepository.findById(cardId).orElseThrow(NOT_FOUND_EXCEPTION);
+
+        if (card.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+            throw new CardOperationException("Cannot delete card with non-zero balance");
+        }
+
+        cardRepository.deleteById(cardId);
     }
 
     @Override
@@ -42,50 +69,29 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<CardData> getAllByUserId(UUID userId, Pageable pageable) {
+    @Transactional
+    public void setBlockedById(UUID cardId, boolean blocked) {
+        final Card card = cardRepository.findById(cardId).orElseThrow(NOT_FOUND_EXCEPTION);
+        setBlocked(card, blocked);
+    }
+
+    @Override
+    public CardData getOwnById(UUID userId, UUID cardId) {
+        return cardRepository.findByUserIdAndId(userId, cardId)
+                .map(card -> modelMapper.map(card, CardData.class))
+                .orElseThrow(NOT_FOUND_EXCEPTION);
+    }
+
+    @Override
+    public Page<CardData> getAllOwned(UUID userId, Pageable pageable) {
         return cardRepository.findAllByUserId(userId, pageable)
                 .map(card -> modelMapper.map(card, CardData.class));
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public CardData getByPanLast4(UUID userId, String panLast4) {
-        final Card card = findByUserIdAndPanLast4OrThrow(userId, panLast4);
-        return modelMapper.map(card, CardData.class);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public CardData getById(UUID userId, UUID cardId) {
-        final Card card = findByUserIdAndCardIdOrThrow(userId, cardId);
-        return modelMapper.map(card, CardData.class);
-    }
-
-    @Override
-    @Transactional
-    public void setStatusById(UUID userId, UUID cardId, CardStatus status) {
-        final Card card = findByUserIdAndCardIdOrThrow(userId, cardId);
-
-        if (card.getStatus() == status) {
-            return;
-        }
-
-        card.setStatus(status);
-        cardRepository.save(card);
-    }
-
-    @Override
-    @Transactional
-    public void setStatusByPanLast4(UUID userId, String panLast4, CardStatus status) {
-        final Card card = findByUserIdAndPanLast4OrThrow(userId, panLast4);
-
-        if (card.getStatus() == status) {
-            return;
-        }
-
-        card.setStatus(status);
-        cardRepository.save(card);
+    public void setBlockedOwnById(UUID userId, UUID cardId, boolean blocked) {
+        final Card card = cardRepository.findByUserIdAndId(userId, cardId).orElseThrow(NOT_FOUND_EXCEPTION);
+        setBlocked(card, blocked);
     }
 
     @Override
@@ -100,11 +106,6 @@ public class CardServiceImpl implements CardService {
         fromCard.setBalance(fromCard.getBalance().subtract(amount));
         toCard.setBalance(toCard.getBalance().add(amount));
         cardRepository.saveAll(List.of(fromCard, toCard));
-    }
-
-    @Override
-    public void deleteByPanLast4(UUID userId, String panLast4) {
-
     }
 
     private Card findByUserIdAndPanLast4OrThrow(UUID userId, String panLast4) {
