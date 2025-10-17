@@ -2,24 +2,25 @@ package com.feniksovich.bankcards.service.card;
 
 import com.feniksovich.bankcards.dto.card.CardData;
 import com.feniksovich.bankcards.dto.card.TransactionRequest;
-import com.feniksovich.bankcards.entity.CardStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
 public interface CardService {
+
+    // Admin Operations
+
+    CardData getById(UUID cardId);
     CardData create(UUID userId);
+    void delete(UUID cardId);
     Page<CardData> getAll(Pageable pageable);
-    Page<CardData> getAllByUserId(UUID userId, Pageable pageable);
+    void setBlockedById(UUID cardId, boolean blocked);
 
-    CardData getById(UUID userId, UUID cardId);
-    CardData getByPanLast4(UUID userId, String panLast4);
+    // User Operations
 
-    void setStatusById(UUID userId, UUID cardId, CardStatus status);
-    void setStatusByPanLast4(UUID userId, String panLast4, CardStatus status);
-
+    CardData getOwnById(UUID userId, UUID cardId);
+    Page<CardData> getAllOwned(UUID userId, Pageable pageable);
+    void setBlockedOwnById(UUID userId, UUID cardId, boolean blocked);
     void performTransaction(UUID userId, TransactionRequest request);
-
-    void deleteByPanLast4(UUID userId, String panLast4);
 }

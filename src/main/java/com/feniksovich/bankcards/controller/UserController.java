@@ -1,12 +1,7 @@
 package com.feniksovich.bankcards.controller;
 
-import com.feniksovich.bankcards.dto.card.CardData;
-import com.feniksovich.bankcards.dto.card.TransactionRequest;
 import com.feniksovich.bankcards.dto.user.UserData;
 import com.feniksovich.bankcards.dto.user.UserUpdateRequest;
-import com.feniksovich.bankcards.entity.CardStatus;
-import com.feniksovich.bankcards.security.UserPrincipal;
-import com.feniksovich.bankcards.service.card.CardService;
 import com.feniksovich.bankcards.service.user.UserService;
 import com.feniksovich.bankcards.util.RegexPatterns;
 import jakarta.validation.Valid;
@@ -17,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,83 +19,46 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
     private final UserService userService;
-    private final CardService cardService;
 
     @Autowired
-    public UserController(UserService userService, CardService cardService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.cardService = cardService;
     }
 
-    // User self-management API
-
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
-    public UserData getUser(@AuthenticationPrincipal UserPrincipal principal) {
-        return userService.getById(principal.getId());
+    public Page<UserData> getAllUsers(@PageableDefault Pageable pageable) {
+        return userService.getAll(pageable);
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public void updateUser(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody @Valid UserUpdateRequest request
-    ) {
-        userService.updateById(principal.getId(), request);
-    }
-
-    // User cards management API
-
-    @GetMapping(path = "/cards", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/users/search")
     @ResponseStatus(HttpStatus.OK)
-    public Page<CardData> getCards(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @PageableDefault Pageable pageable
+    public UserData searchUserByPhoneNumber(
+            @RequestParam @Pattern(regexp = RegexPatterns.PHONE_NUMBER) String phoneNumber
     ) {
-        return cardService.getAllByUserId(principal.getId(), pageable);
+        return userService.getByPhoneNumber(phoneNumber);
     }
 
-    @GetMapping(path = "/cards/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public CardData searchCardByLast4(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @RequestParam @Pattern(regexp = RegexPatterns.CARD_PAN_CHUNK) String panLast4
-    ) {
-        return cardService.getByPanLast4(principal.getId(), panLast4);
+    public UserData getUser(@PathVariable UUID userId) {
+        return userService.getById(userId);
     }
 
-    @GetMapping(path = "/cards/{cardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public CardData getCard(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @PathVariable UUID cardId
-    ) {
-        return cardService.getById(principal.getId(), cardId);
-    }
-
-    @PostMapping(path = "/cards/{cardId}/block", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void blockCard(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @PathVariable UUID cardId
-    ) {
-        cardService.setStatusById(principal.getId(), cardId, CardStatus.BLOCKED);
+    public void updateUser(@PathVariable UUID userId, @RequestBody @Valid UserUpdateRequest request) {
+        userService.updateById(userId, request);
     }
 
-    @PostMapping(
-            path = "/transaction",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void performTransaction(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody @Valid TransactionRequest request
-    ) {
-        cardService.performTransaction(principal.getId(), request);
+    public void deleteUser(@PathVariable UUID userId) {
+        userService.deleteById(userId);
     }
 
 }
