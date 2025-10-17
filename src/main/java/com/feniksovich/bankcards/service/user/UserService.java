@@ -1,7 +1,7 @@
 package com.feniksovich.bankcards.service.user;
 
-import com.feniksovich.bankcards.dto.user.UserData;
 import com.feniksovich.bankcards.dto.auth.SignUpRequest;
+import com.feniksovich.bankcards.dto.user.UserData;
 import com.feniksovich.bankcards.dto.user.UserUpdateRequest;
 import com.feniksovich.bankcards.entity.User;
 import org.springframework.data.domain.Page;

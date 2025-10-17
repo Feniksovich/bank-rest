@@ -1,6 +1,5 @@
 package com.feniksovich.bankcards.repository;
 
-import com.feniksovich.bankcards.dto.card.CardData;
 import com.feniksovich.bankcards.entity.Card;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

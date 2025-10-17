@@ -1,6 +1,5 @@
 package com.feniksovich.bankcards.service.auth;
 
-import com.feniksovich.bankcards.dto.TokensPairResponse;
 import com.feniksovich.bankcards.dto.auth.AuthResponse;
 import com.feniksovich.bankcards.dto.auth.SignInRequest;
 import com.feniksovich.bankcards.dto.auth.SignUpRequest;

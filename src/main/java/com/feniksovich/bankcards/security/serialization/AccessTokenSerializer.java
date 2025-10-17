@@ -1,14 +1,11 @@
 package com.feniksovich.bankcards.security.serialization;
 
 import com.feniksovich.bankcards.security.JwtToken;
-import com.feniksovich.omsu.spring.security.jwt.JwtToken;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Date;
