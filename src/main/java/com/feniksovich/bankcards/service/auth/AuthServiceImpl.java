@@ -1,6 +1,7 @@
 package com.feniksovich.bankcards.service.auth;
 
 import com.feniksovich.bankcards.dto.TokensPairResponse;
+import com.feniksovich.bankcards.dto.auth.AuthResponse;
 import com.feniksovich.bankcards.dto.auth.SignInRequest;
 import com.feniksovich.bankcards.dto.auth.SignUpRequest;
 import com.feniksovich.bankcards.entity.User;
@@ -52,14 +53,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokensPairResponse signUp(SignUpRequest request) {
+    public AuthResponse signUp(SignUpRequest request) {
         final User user = userService.register(request);
         final UserPrincipal principal = UserPrincipal.of(user);
         return issueTokensPair(principal);
     }
 
     @Override
-    public TokensPairResponse signIn(SignInRequest request) {
+    public AuthResponse signIn(SignInRequest request) {
         final UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(request.getPhoneNumber(), request.getPassword());
         final Authentication authentication = authenticationManager.authenticate(token);
@@ -83,7 +84,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokensPairResponse refreshTokensPair() {
+    public AuthResponse refreshTokensPair() {
         // JwtAuthenticationProvider stores authentication in SecurityContextHolder
         final JwtAuthenticationToken authentication =
                 (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
@@ -95,16 +96,17 @@ public class AuthServiceImpl implements AuthService {
         return issueTokensPair(principal);
     }
 
-    private TokensPairResponse issueTokensPair(UserPrincipal principal) {
+    private AuthResponse issueTokensPair(UserPrincipal principal) {
         final JwtToken accessToken = accessTokenFactory.generate(principal);
         final JwtToken refreshToken = refreshTokenFactory.generate(principal);
 
         userRefreshTokenService.track(refreshToken);
 
-        return new TokensPairResponse(
+        return new AuthResponse(
                 accessTokenSerializer.serialize(accessToken),
                 refreshTokenSerializer.serialize(refreshToken),
-                accessToken.expiresAt()
+                accessToken.expiresAt(),
+                refreshToken.expiresAt()
         );
     }
 

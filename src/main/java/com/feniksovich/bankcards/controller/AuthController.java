@@ -1,6 +1,7 @@
 package com.feniksovich.bankcards.controller;
 
 import com.feniksovich.bankcards.dto.TokensPairResponse;
+import com.feniksovich.bankcards.dto.auth.AuthResponse;
 import com.feniksovich.bankcards.dto.auth.SignInRequest;
 import com.feniksovich.bankcards.dto.auth.SignUpRequest;
 import com.feniksovich.bankcards.service.auth.AuthService;
@@ -26,13 +27,13 @@ public class AuthController {
 
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public TokensPairResponse signUp(@RequestBody @Valid SignUpRequest request) {
+    public AuthResponse signUp(@RequestBody @Valid SignUpRequest request) {
         return authService.signUp(request);
     }
 
     @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public TokensPairResponse signIn(@RequestBody @Valid SignInRequest request) {
+    public AuthResponse signIn(@RequestBody @Valid SignInRequest request) {
         return authService.signIn(request);
     }
 
@@ -46,7 +47,7 @@ public class AuthController {
     @PostMapping("/tokens")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('jwt:refresh')")
-    public TokensPairResponse refreshTokens() {
+    public AuthResponse refreshTokens() {
         return authService.refreshTokensPair();
     }
 }
