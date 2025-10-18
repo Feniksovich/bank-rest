@@ -1,9 +1,5 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/changeset/001-create-users-table.sql
+      file: db/changelog/changeset/001-create-all-tables.sql
   - include:
-      file: db/changelog/changeset/002-create-cards-table.sql
-  - include:
-      file: db/changelog/changeset/003-create-refresh-tokens-table.sql
-  - include:
-      file: db/changelog/changeset/004-insert-admin-user.sql
+      file: db/changelog/changeset/002-insert-admin-user.sql
