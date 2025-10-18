@@ -65,7 +65,7 @@ class CardServiceTest {
                 .id(userId)
                 .firstName("Иван")
                 .lastName("Иванов")
-                .phoneNumber("987654321")
+                .phoneNumber("0987654321")
                 .build();
 
         existingCard = Card.builder()
