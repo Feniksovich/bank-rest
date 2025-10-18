@@ -15,7 +15,14 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Table(name = "cards") //TODO Constrains, indexes
+@Table(name = "cards",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uq_user_pan_last_4", columnNames = {"user_id", "pan_last4"})
+        },
+        indexes = {
+                @Index(name = "idx_cards_last4", columnList = "pan_last4"),
+                @Index(name = "idx_cards_user_last4", columnList = "user_id, pan_last4")
+        })
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,9 +32,8 @@ public class Card {
     @Column(name = "pan_encrypted", nullable = false, length = 512)
     private String panEncrypted;
 
-    @Pattern(regexp = RegexPatterns.CARD_PAN_CHUNK)
-    @Column(name = "pan_last_chunk", nullable = false, length = 4)
     @Pattern(regexp = RegexPatterns.CARD_PAN_4)
+    @Column(name = "pan_last_4", nullable = false, length = 4)
     private String panLast4;
 
     @Column(name = "card_holder", nullable = false)

@@ -14,7 +14,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Table(name = "users")
+@Table(name = "users", indexes = {
+    @Index(name = "idx_users_phone_number", columnList = "phone_number")
+})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
