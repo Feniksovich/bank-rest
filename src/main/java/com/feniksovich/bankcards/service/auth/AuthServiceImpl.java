@@ -3,7 +3,7 @@ package com.feniksovich.bankcards.service.auth;
 import com.feniksovich.bankcards.dto.auth.AuthResponse;
 import com.feniksovich.bankcards.dto.auth.SignInRequest;
 import com.feniksovich.bankcards.dto.auth.SignUpRequest;
-import com.feniksovich.bankcards.entity.User;
+import com.feniksovich.bankcards.dto.user.UserData;
 import com.feniksovich.bankcards.security.JwtAuthenticationToken;
 import com.feniksovich.bankcards.security.JwtToken;
 import com.feniksovich.bankcards.security.UserPrincipal;
@@ -53,9 +53,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public AuthResponse signUp(SignUpRequest request) {
-        final User user = userService.register(request);
-        final UserPrincipal principal = UserPrincipal.of(user);
+        final UserData userData = userService.register(request);
+        final UserPrincipal principal = UserPrincipal.of(userData);
         return issueTokensPair(principal);
     }
 

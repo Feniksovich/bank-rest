@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public User register(SignUpRequest request) {
+    public UserData register(SignUpRequest request) {
         if (repository.existsByPhoneNumber(request.getPhoneNumber())) {
             throw new ResourceConflictException("User with specified phone number already exists");
         }
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         // Hash the password before saving
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         final User user = modelMapper.map(request, User.class);
-        return repository.save(user);
+        return modelMapper.map(repository.save(user), UserData.class);
     }
 
     @Override
