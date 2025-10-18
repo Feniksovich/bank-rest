@@ -1,5 +1,6 @@
 package com.feniksovich.bankcards.security;
 
+import com.feniksovich.bankcards.dto.user.UserData;
 import com.feniksovich.bankcards.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,21 @@ public class UserPrincipal implements UserDetails {
     private final Collection<? extends GrantedAuthority> authorities;
 
     public static UserPrincipal of(User user) {
-        return new UserPrincipal(user.getId(), user.getPhoneNumber(), user.getPassword(), user.getRole().getAuthorities());
+        return new UserPrincipal(
+                user.getId(),
+                user.getPhoneNumber(),
+                user.getPassword(),
+                user.getRole().getAuthorities()
+        );
+    }
+
+    public static UserPrincipal of(UserData userData) {
+        return new UserPrincipal(
+                userData.getId(),
+                userData.getPhoneNumber(),
+                null,
+                userData.getRole().getAuthorities()
+        );
     }
 
     @Override
