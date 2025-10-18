@@ -6,16 +6,19 @@ spring:
     name: ${APP_NAME}
   jpa:
     database: postgresql
-    generate-ddl: true
     open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
   datasource:
     url: jdbc:postgresql://db:5432/${POSTGRES_DB}?currentSchema=public
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
-
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yml
+    contexts: default
+    default-schema: public
 security:
   access-token:
     jwk: ${ACCESS_TOKEN_JWK}
