@@ -65,7 +65,8 @@ public class SecurityConfigurer {
                     registry.requestMatchers("/account/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name());
                     registry.requestMatchers("/cards/**").hasRole(Role.ADMIN.name());
                     registry.requestMatchers("/users/**").hasRole(Role.ADMIN.name());
-                    registry.anyRequest().permitAll();
+                    registry.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                    registry.anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
