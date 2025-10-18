@@ -1,4 +1,4 @@
-package com.feniksovich.bankcards.util;
+package com.feniksovich.bankcards.dto;
 
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
