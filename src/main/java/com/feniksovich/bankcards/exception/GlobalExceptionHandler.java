@@ -1,8 +1,8 @@
 package com.feniksovich.bankcards.exception;
 
-import com.feniksovich.bankcards.dto.ErrorResponse;
-import com.feniksovich.bankcards.dto.ValidationErrorResponse;
-import com.feniksovich.bankcards.dto.Violation;
+import com.feniksovich.bankcards.dto.validation.ErrorResponse;
+import com.feniksovich.bankcards.dto.validation.ValidationErrorResponse;
+import com.feniksovich.bankcards.dto.validation.Violation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

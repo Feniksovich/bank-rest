@@ -1,4 +1,4 @@
-package com.feniksovich.bankcards.dto;
+package com.feniksovich.bankcards.dto.validation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
