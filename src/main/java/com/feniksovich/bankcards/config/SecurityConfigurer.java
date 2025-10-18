@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -62,7 +64,7 @@ public class SecurityConfigurer {
                         configurer.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 )
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/account/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name());
+                    registry.requestMatchers("/account/**").hasRole(Role.USER.name());
                     registry.requestMatchers("/cards/**").hasRole(Role.ADMIN.name());
                     registry.requestMatchers("/users/**").hasRole(Role.ADMIN.name());
                     registry.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
@@ -70,6 +72,11 @@ public class SecurityConfigurer {
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        return RoleHierarchyImpl.fromHierarchy("ROLE_ADMIN > ROLE_USER");
     }
 
     @Bean
