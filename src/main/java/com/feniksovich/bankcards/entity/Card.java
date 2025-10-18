@@ -27,6 +27,7 @@ public class Card {
 
     @Pattern(regexp = RegexPatterns.CARD_PAN_CHUNK)
     @Column(name = "pan_last_chunk", nullable = false, length = 4)
+    @Pattern(regexp = RegexPatterns.CARD_PAN_4)
     private String panLast4;
 
     @Column(name = "card_holder", nullable = false)

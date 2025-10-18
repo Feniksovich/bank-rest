@@ -19,14 +19,14 @@ import java.math.BigDecimal;
 public class TransactionRequest {
     @NotBlank(message = "Source card PAN last 4 digits required")
     @Pattern(
-            regexp = RegexPatterns.CARD_PAN_CHUNK,
+            regexp = RegexPatterns.CARD_PAN_4,
             message = "Source card PAN last 4 digits format is invalid"
     )
     private String fromPanLast4;
 
     @NotBlank(message = "Destination card PAN last 4 digits required")
     @Pattern(
-            regexp = RegexPatterns.CARD_PAN_CHUNK,
+            regexp = RegexPatterns.CARD_PAN_4,
             message = "Destination card PAN last 4 digits format is invalid"
     )
     private String toPanLast4;
