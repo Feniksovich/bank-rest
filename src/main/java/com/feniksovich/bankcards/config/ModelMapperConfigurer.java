@@ -1,5 +1,6 @@
 package com.feniksovich.bankcards.config;
 
+import com.feniksovich.bankcards.util.InstantZonedDateTimeConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ public class ModelMapperConfigurer {
     public ModelMapper modelMapper() {
         final ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        modelMapper.addConverter(new InstantZonedDateTimeConverter());
         return modelMapper;
     }
 

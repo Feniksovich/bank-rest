@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Data
@@ -19,6 +20,6 @@ public class UserData {
     private String firstName;
     private String phoneNumber;
     private Role role;
-    private Instant createdAt;
-    private Instant updatedAt;
+    private ZonedDateTime createdAt;
+    private ZonedDateTime updatedAt;
 }
