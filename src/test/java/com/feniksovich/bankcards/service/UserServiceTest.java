@@ -72,7 +72,7 @@ class UserServiceTest {
         final SignUpRequest request = SignUpRequest.builder()
                 .lastName("Иванов")
                 .firstName("Иван")
-                .phoneNumber("123456789")
+                .phoneNumber("1234567890")
                 .password("plainPassword")
                 .build();
 
@@ -80,7 +80,7 @@ class UserServiceTest {
                 .id(UUID.randomUUID())
                 .lastName("Иванов")
                 .firstName("Иван")
-                .phoneNumber("123456789")
+                .phoneNumber("1234567890")
                 .password("encodedPassword")
                 .build();
 
@@ -88,7 +88,7 @@ class UserServiceTest {
                 .id(user.getId())
                 .lastName("Иванов")
                 .firstName("Иван")
-                .phoneNumber("123456789")
+                .phoneNumber("1234567890")
                 .build();
 
         when(userRepository.existsByPhoneNumber(request.getPhoneNumber())).thenReturn(false);
@@ -110,7 +110,7 @@ class UserServiceTest {
     @Test
     void register_WhenPhoneNumberExists_ShouldThrowResourceConflictException() {
         final SignUpRequest request = SignUpRequest.builder()
-                .phoneNumber("123456789")
+                .phoneNumber("1234567890")
                 .build();
 
         when(userRepository.existsByPhoneNumber(request.getPhoneNumber())).thenReturn(true);
