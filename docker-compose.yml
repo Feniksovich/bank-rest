@@ -1,0 +1,64 @@
+services:
+  db:
+    image: postgres:18-bookworm
+    container_name: "db-postgres"
+    networks: [bankcards-network]
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+    container_name: "bankcards-app"
+    networks: [bankcards-network]
+    environment:
+      # Database connection
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      
+      # Application configuration
+      APP_NAME: ${APP_NAME}
+      
+      # Liquibase configuration
+      SPRING_LIQUIBASE_ENABLED: true
+      SPRING_LIQUIBASE_CHANGE_LOG: "classpath:/db/changelog/db.changelog-master.sql"
+      
+      # JWT configuration
+      ACCESS_TOKEN_JWK: ${ACCESS_TOKEN_JWK}
+      REFRESH_TOKEN_JWK: ${REFRESH_TOKEN_JWK}
+      ACCESS_TOKEN_EXPIRATION: ${ACCESS_TOKEN_EXPIRATION}
+      REFRESH_TOKEN_EXPIRATION: ${REFRESH_TOKEN_EXPIRATION}
+      
+      # Crypto configuration
+      AES_KEY_BASE64: ${AES_KEY_BASE64}
+
+      # JVM Configuration
+      JVM_XMS: "512m"
+      JVM_XMX: "1024m"
+      JVM_GC: "G1GC"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+networks:
+  bankcards-network:
+
+volumes:
+  pgdata:

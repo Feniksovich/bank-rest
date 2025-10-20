@@ -4,6 +4,17 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Environment Variables ###
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+
+### Docker ###
+pgdata/
+build/
+
 ### STS ###
 .apt_generated
 .classpath
