@@ -10,11 +10,13 @@ import com.feniksovich.bankcards.repository.CardRepository;
 import com.feniksovich.bankcards.repository.UserRepository;
 import com.feniksovich.bankcards.security.crypto.CryptoService;
 import com.feniksovich.bankcards.service.card.CardServiceImpl;
+import com.feniksovich.bankcards.util.CardUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -134,9 +136,12 @@ class CardServiceTest {
         when(cardRepository.save(any(Card.class))).thenReturn(savedCard);
         when(modelMapper.map(savedCard, CardData.class)).thenReturn(existingCardData);
 
-        final CardData result = cardService.create(userId);
+        try (final MockedStatic<CardUtil> util = mockStatic(CardUtil.class)) {
+            util.when(CardUtil::generateCardPan).thenReturn(generatedPan);
+            final CardData result = cardService.create(userId);
+            assertThat(result).isEqualTo(existingCardData);
+        }
 
-        assertThat(result).isEqualTo(existingCardData);
         verify(userRepository).findById(userId);
         verify(cryptoService).encrypt(anyString());
         verify(cardRepository).save(any(Card.class));
