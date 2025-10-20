@@ -35,7 +35,7 @@ services:
       
       # Liquibase configuration
       SPRING_LIQUIBASE_ENABLED: true
-      SPRING_LIQUIBASE_CHANGE_LOG: "classpath:/db/changelog/db.changelog-master.sql"
+      SPRING_LIQUIBASE_CHANGE_LOG: "classpath:/db/changelog/db.changelog-master.yml"
       
       # JWT configuration
       ACCESS_TOKEN_JWK: ${ACCESS_TOKEN_JWK}
