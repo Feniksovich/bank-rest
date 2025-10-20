@@ -69,11 +69,14 @@ class UserServiceTest {
 
     @Test
     void register_WhenValidRequest_ShouldReturnUser() {
+        final String rawPassword = "plainPassword";
+        final String encodedPassword = "encodedPassword";
+
         final SignUpRequest request = SignUpRequest.builder()
                 .lastName("Иванов")
                 .firstName("Иван")
                 .phoneNumber("1234567890")
-                .password("plainPassword")
+                .password(rawPassword)
                 .build();
 
         final User user = User.builder()
@@ -81,7 +84,7 @@ class UserServiceTest {
                 .lastName("Иванов")
                 .firstName("Иван")
                 .phoneNumber("1234567890")
-                .password("encodedPassword")
+                .password(encodedPassword)
                 .build();
 
         final UserData userData = UserData.builder()
@@ -92,7 +95,7 @@ class UserServiceTest {
                 .build();
 
         when(userRepository.existsByPhoneNumber(request.getPhoneNumber())).thenReturn(false);
-        when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
+        when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
         when(modelMapper.map(request, User.class)).thenReturn(user);
         when(userRepository.save(user)).thenReturn(user);
         when(modelMapper.map(user, UserData.class)).thenReturn(userData);
@@ -101,7 +104,7 @@ class UserServiceTest {
 
         assertThat(result).isEqualTo(userData);
         verify(userRepository).existsByPhoneNumber(request.getPhoneNumber());
-        verify(passwordEncoder).encode(request.getPassword());
+        verify(passwordEncoder).encode(rawPassword);
         verify(modelMapper).map(request, User.class);
         verify(userRepository).save(user);
         verify(modelMapper).map(user, UserData.class);
