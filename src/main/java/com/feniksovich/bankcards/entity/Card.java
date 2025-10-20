@@ -45,7 +45,6 @@ public class Card {
     @Column(name = "balance", nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "blocked", nullable = false)
     private boolean blocked = false;
 
