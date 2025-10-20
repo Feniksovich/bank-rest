@@ -28,13 +28,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<UserData> getAllUsers(@PageableDefault Pageable pageable) {
         return userService.getAll(pageable);
     }
 
-    @GetMapping("/users/search")
+    @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     public UserData searchUserByPhoneNumber(
             @RequestParam @Pattern(regexp = RegexPatterns.PHONE_NUMBER) String phoneNumber
@@ -42,19 +42,19 @@ public class UserController {
         return userService.getByPhoneNumber(phoneNumber);
     }
 
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public UserData getUser(@PathVariable UUID userId) {
         return userService.getById(userId);
     }
 
-    @PutMapping("/users/{userId}")
+    @PutMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateUser(@PathVariable UUID userId, @RequestBody @Valid UserUpdateRequest request) {
         userService.updateById(userId, request);
     }
 
-    @DeleteMapping("/users/{userId}")
+    @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable UUID userId) {
         userService.deleteById(userId);
