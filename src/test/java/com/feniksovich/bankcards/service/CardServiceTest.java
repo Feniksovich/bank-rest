@@ -353,7 +353,7 @@ class CardServiceTest {
                 .isInstanceOf(CardOperationException.class)
                 .hasMessageContaining("same card");
 
-        verify(cardRepository).findByUserIdAndPanLast4(userId, "1111");
+        verify(cardRepository, times(2)).findByUserIdAndPanLast4(userId, "1111");
         verifyNoMoreInteractions(cardRepository);
     }
 
