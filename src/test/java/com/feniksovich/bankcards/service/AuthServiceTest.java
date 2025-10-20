@@ -131,8 +131,8 @@ class AuthServiceTest {
                 .build();
 
         when(userService.register(request)).thenReturn(userData);
-        when(accessTokenFactory.generate(userPrincipal)).thenReturn(accessToken);
-        when(refreshTokenFactory.generate(userPrincipal)).thenReturn(refreshToken);
+        when(accessTokenFactory.generate(argThat(p -> p.getId().equals(userData.getId())))).thenReturn(accessToken);
+        when(refreshTokenFactory.generate(argThat(p -> p.getId().equals(userData.getId())))).thenReturn(refreshToken);
         when(accessTokenSerializer.serialize(accessToken)).thenReturn("serializedAccessToken");
         when(refreshTokenSerializer.serialize(refreshToken)).thenReturn("serializedRefreshToken");
 
@@ -140,8 +140,8 @@ class AuthServiceTest {
 
         assertThat(result).isEqualTo(expectedResponse);
         verify(userService).register(request);
-        verify(accessTokenFactory).generate(userPrincipal);
-        verify(refreshTokenFactory).generate(userPrincipal);
+        verify(accessTokenFactory).generate(argThat(p -> p.getId().equals(userData.getId())));
+        verify(refreshTokenFactory).generate(argThat(p -> p.getId().equals(userData.getId())));
         verify(accessTokenSerializer).serialize(accessToken);
         verify(refreshTokenSerializer).serialize(refreshToken);
         verify(userRefreshTokenService).track(refreshToken);
@@ -167,8 +167,8 @@ class AuthServiceTest {
 
         when(authenticationManager.authenticate(authToken)).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userPrincipal);
-        when(accessTokenFactory.generate(userPrincipal)).thenReturn(accessToken);
-        when(refreshTokenFactory.generate(userPrincipal)).thenReturn(refreshToken);
+        when(accessTokenFactory.generate(argThat(p -> p.getId().equals(userData.getId())))).thenReturn(accessToken);
+        when(refreshTokenFactory.generate(argThat(p -> p.getId().equals(userData.getId())))).thenReturn(refreshToken);
         when(accessTokenSerializer.serialize(accessToken)).thenReturn("serializedAccessToken");
         when(refreshTokenSerializer.serialize(refreshToken)).thenReturn("serializedRefreshToken");
 
@@ -176,8 +176,8 @@ class AuthServiceTest {
 
         assertThat(result).isEqualTo(expectedResponse);
         verify(authenticationManager).authenticate(authToken);
-        verify(accessTokenFactory).generate(userPrincipal);
-        verify(refreshTokenFactory).generate(userPrincipal);
+        verify(accessTokenFactory).generate(argThat(p -> p.getId().equals(userData.getId())));
+        verify(refreshTokenFactory).generate(argThat(p -> p.getId().equals(userData.getId())));
         verify(accessTokenSerializer).serialize(accessToken);
         verify(refreshTokenSerializer).serialize(refreshToken);
         verify(userRefreshTokenService).track(refreshToken);
@@ -191,7 +191,7 @@ class AuthServiceTest {
         authService.signOut(true);
 
         verify(userRefreshTokenService).invalidateAll(userPrincipal.getId());
-        verify(securityContext).setAuthentication(null);
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
     }
 
     @Test
@@ -202,7 +202,7 @@ class AuthServiceTest {
         authService.signOut(false);
 
         verify(userRefreshTokenService).invalidate(refreshToken);
-        verify(securityContext).setAuthentication(null);
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
     }
 
     @Test
@@ -258,11 +258,6 @@ class AuthServiceTest {
                 .refreshTokenExpiresAt(refreshToken.expiresAt())
                 .build();
 
-        when(accessTokenFactory.generate(userPrincipal)).thenReturn(accessToken);
-        when(refreshTokenFactory.generate(userPrincipal)).thenReturn(refreshToken);
-        when(accessTokenSerializer.serialize(accessToken)).thenReturn("serializedAccessToken");
-        when(refreshTokenSerializer.serialize(refreshToken)).thenReturn("serializedRefreshToken");
-
         final SignUpRequest request = SignUpRequest.builder()
                 .lastName("Иванов")
                 .firstName("Иван")
@@ -270,11 +265,18 @@ class AuthServiceTest {
                 .password("plainPassword")
                 .build();
 
+        when(userService.register(request)).thenReturn(userData);
+        when(accessTokenFactory.generate(argThat(p -> p.getId().equals(userData.getId())))).thenReturn(accessToken);
+        when(refreshTokenFactory.generate(argThat(p -> p.getId().equals(userData.getId())))).thenReturn(refreshToken);
+        when(accessTokenSerializer.serialize(accessToken)).thenReturn("serializedAccessToken");
+        when(refreshTokenSerializer.serialize(refreshToken)).thenReturn("serializedRefreshToken");
+
         final AuthResponse result = authService.signUp(request);
 
         assertThat(result).isEqualTo(expectedResponse);
-        verify(accessTokenFactory).generate(userPrincipal);
-        verify(refreshTokenFactory).generate(userPrincipal);
+        verify(userService).register(request);
+        verify(accessTokenFactory).generate(argThat(p -> p.getId().equals(userData.getId())));
+        verify(refreshTokenFactory).generate(argThat(p -> p.getId().equals(userData.getId())));
         verify(accessTokenSerializer).serialize(accessToken);
         verify(refreshTokenSerializer).serialize(refreshToken);
         verify(userRefreshTokenService).track(refreshToken);
