@@ -8,8 +8,8 @@ CREATE TABLE users (
     last_name    VARCHAR(100) NOT NULL,
     first_name   VARCHAR(100) NOT NULL,
     role         VARCHAR(20)  NOT NULL,
-    created_at   TIMESTAMP    NOT NULL WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at   TIMESTAMP    NOT NULL WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_users_phone_number ON users(phone_number);
@@ -40,8 +40,8 @@ CREATE INDEX idx_cards_user_last4 ON cards(user_id, pan_last_4);
 
 --changeset feniksovich:003-create-refresh-tokens-table
 CREATE TABLE refresh_tokens (
-    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id    UUID NOT NULL,
+    id         UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id    UUID      NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     CONSTRAINT fk_refresh_tokens_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
