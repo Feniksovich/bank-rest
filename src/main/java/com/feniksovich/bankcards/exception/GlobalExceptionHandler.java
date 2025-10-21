@@ -96,19 +96,4 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(builder.build(), ex.getStatusCode());
     }
-
-    // Fallback exception handler
-
-    @ExceptionHandler(Exception.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse onGenericException(Exception ex) {
-        log.error("Internal Server Error", ex);
-        return ErrorResponse.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .error("Internal Server Error")
-                .message("An unexpected error occurred")
-                .build();
-    }
-
 }
