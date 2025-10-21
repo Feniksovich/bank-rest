@@ -4,7 +4,6 @@ import com.feniksovich.bankcards.dto.auth.AuthResponse;
 import com.feniksovich.bankcards.dto.auth.SignInRequest;
 import com.feniksovich.bankcards.dto.auth.SignUpRequest;
 import com.feniksovich.bankcards.service.auth.AuthService;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,14 +25,12 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    @PermitAll
     public AuthResponse signUp(@RequestBody @Valid SignUpRequest request) {
         return authService.signUp(request);
     }
 
     @PostMapping("/signin")
     @ResponseStatus(HttpStatus.OK)
-    @PermitAll
     public AuthResponse signIn(@RequestBody @Valid SignInRequest request) {
         return authService.signIn(request);
     }

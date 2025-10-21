@@ -11,13 +11,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -56,6 +56,7 @@ public class SecurityConfigurer {
         jwtAuthenticationFilter.setRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher("/**"));
         jwtAuthenticationFilter.setSuccessHandler((_, _, _) -> {});
         return httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(configurer -> configurer.configurationSource(corsConfigurationSource))
                 .sessionManagement(configurer ->
                         configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -67,6 +68,11 @@ public class SecurityConfigurer {
                     registry.requestMatchers("/account/**").hasRole(Role.USER.name());
                     registry.requestMatchers("/cards/**").hasRole(Role.ADMIN.name());
                     registry.requestMatchers("/users/**").hasRole(Role.ADMIN.name());
+
+                    registry.requestMatchers("/auth/signup", "/auth/signin").permitAll();
+                    registry.requestMatchers("/auth/signout").hasAuthority("jwt:signout");
+                    registry.requestMatchers("/auth/tokens").hasAuthority("jwt:refresh");
+
                     registry.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     registry.anyRequest().authenticated();
                 })
