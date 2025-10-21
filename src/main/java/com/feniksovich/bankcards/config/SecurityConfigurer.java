@@ -6,7 +6,7 @@ import com.feniksovich.bankcards.security.ExtendedUserDetailsService;
 import com.feniksovich.bankcards.security.JwtAuthenticationProvider;
 import com.feniksovich.bankcards.security.crypto.AesGcmCryptoService;
 import com.feniksovich.bankcards.security.crypto.CryptoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.feniksovich.bankcards.service.auth.UserRefreshTokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -36,14 +36,7 @@ import java.util.Base64;
 @EnableMethodSecurity
 public class SecurityConfigurer {
 
-    private final ExtendedUserDetailsService userDetailsService;
-
     private static final int PASSWORD_ENCODER_BCRYPT_ROUNDS = 12;
-
-    @Autowired
-    public SecurityConfigurer(ExtendedUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(
@@ -93,7 +86,8 @@ public class SecurityConfigurer {
     @Bean
     public AuthenticationManager authenticationManager(
             PasswordEncoder passwordEncoder,
-            JwtAuthenticationProvider jwtAuthenticationProvider
+            ExtendedUserDetailsService userDetailsService,
+            UserRefreshTokenService refreshTokenService
     ) {
         // Username and password authentication provider
         final DaoAuthenticationProvider daoAuthenticationProvider =
@@ -101,6 +95,8 @@ public class SecurityConfigurer {
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
 
         // Register along with JWT authentication provider
+        final JwtAuthenticationProvider jwtAuthenticationProvider =
+                new JwtAuthenticationProvider(userDetailsService, refreshTokenService);
         return new ProviderManager(daoAuthenticationProvider, jwtAuthenticationProvider);
     }
 

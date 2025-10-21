@@ -1,21 +1,17 @@
 package com.feniksovich.bankcards.security;
 
 import com.feniksovich.bankcards.service.auth.UserRefreshTokenService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.stereotype.Component;
 
-@Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final ExtendedUserDetailsService userDetailsService;
     private final UserRefreshTokenService userRefreshTokenService;
 
-    @Autowired
     public JwtAuthenticationProvider(
             ExtendedUserDetailsService userDetailsService,
             UserRefreshTokenService userRefreshTokenService
