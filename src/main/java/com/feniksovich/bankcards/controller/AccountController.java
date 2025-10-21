@@ -42,6 +42,7 @@ public class AccountController {
     }
 
     @PutMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateUser(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody @Valid UserUpdateRequest request
