@@ -1,21 +1,25 @@
 # Multi-stage build to optimize the final image size
-FROM maven:3.9.6-openjdk-25-slim AS build
+FROM maven:3.9-eclipse-temurin-23 AS build
 WORKDIR /app
 
 COPY pom.xml .
-RUN mvn dependency:go-offline -B -q
+COPY .mvn/settings.xml /usr/share/maven/ref/settings-docker.xml
+ENV MAVEN_CONFIG=/root/.m2
+
+RUN --mount=type=cache,target=/root/.m2/repository \
+    mvn dependency:go-offline --settings /usr/share/maven/ref/settings-docker.xml
 
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN --mount=type=cache,target=/root/.m2/repository \
+    mvn clean package -DskipTests --settings /usr/share/maven/ref/settings-docker.xml
 
 # Final stage
-FROM openjdk:25-jdk-slim
+FROM eclipse-temurin:23-jre
 WORKDIR /app
 
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 COPY --from=build /app/target/*.jar app.jar
 
-# Установка прав доступа
 RUN chown -R appuser:appuser /app
 USER appuser
 

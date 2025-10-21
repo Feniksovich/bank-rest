@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <mirrors>
+        <mirror>
+            <id>google-maven-central</id>
+            <name>Google Maven Central Mirror</name>
+            <url>https://maven-central.storage-download.googleapis.com/maven2/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+        <mirror>
+            <id>mirror-spring-to-central</id>
+            <name>Mirror Spring repos to Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+            <mirrorOf>spring-release,spring-milestones,spring-snapshots</mirrorOf>
+        </mirror>
+    </mirrors>
+
+    <profiles>
+        <profile>
+            <id>retry-and-timeouts</id>
+            <properties>
+                <aether.connector.http.retryHandler.count>5</aether.connector.http.retryHandler.count>
+                <aether.connector.http.connectionMaxTtl>600000</aether.connector.http.connectionMaxTtl>
+                <aether.connector.http.get.maxRetries>5</aether.connector.http.get.maxRetries>
+                <aether.connector.http.reuseConnections>false</aether.connector.http.reuseConnections>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>retry-and-timeouts</activeProfile>
+    </activeProfiles>
+
+</settings>
+
+
