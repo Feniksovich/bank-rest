@@ -1,7 +1,6 @@
 package com.feniksovich.bankcards.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
