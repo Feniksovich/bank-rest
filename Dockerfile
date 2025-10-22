@@ -1,19 +1,20 @@
-# Multi-stage build to optimize the final image size
+# Build Stage
 FROM maven:3.9-eclipse-temurin-23 AS build
 WORKDIR /app
 
 COPY pom.xml .
 COPY .mvn/settings.xml /usr/share/maven/ref/settings-docker.xml
-ENV MAVEN_CONFIG=/root/.m2
-
-RUN --mount=type=cache,target=/root/.m2/repository \
-    mvn dependency:go-offline --settings /usr/share/maven/ref/settings-docker.xml
+RUN mvn dependency:go-offline --settings /usr/share/maven/ref/settings-docker.xml
 
 COPY src ./src
-RUN --mount=type=cache,target=/root/.m2/repository \
-    mvn clean package -DskipTests --settings /usr/share/maven/ref/settings-docker.xml
+RUN mvn package -DskipTests
 
-# Final stage
+# Test Stage
+FROM maven:3.9-eclipse-temurin-23 AS test
+WORKDIR /app
+COPY --from=build /app .
+
+# Production Stage
 FROM eclipse-temurin:23-jre
 WORKDIR /app
 

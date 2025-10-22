@@ -3,10 +3,7 @@ services:
     image: postgres:18-bookworm
     container_name: "db-postgres"
     networks: [bankcards-network]
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file: ${ENV_FILE:-.env}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -24,38 +21,27 @@ services:
       context: .
     container_name: "bankcards-app"
     networks: [bankcards-network]
-    environment:
-      # Database connection
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      
-      # Application configuration
-      APP_NAME: ${APP_NAME}
-      
-      # Liquibase configuration
-      SPRING_LIQUIBASE_ENABLED: true
-      SPRING_LIQUIBASE_CHANGE_LOG: "classpath:/db/changelog/db.changelog-master.yml"
-      
-      # JWT configuration
-      ACCESS_TOKEN_JWK: ${ACCESS_TOKEN_JWK}
-      REFRESH_TOKEN_JWK: ${REFRESH_TOKEN_JWK}
-      ACCESS_TOKEN_EXPIRATION: ${ACCESS_TOKEN_EXPIRATION}
-      REFRESH_TOKEN_EXPIRATION: ${REFRESH_TOKEN_EXPIRATION}
-      
-      # Crypto configuration
-      AES_KEY_BASE64: ${AES_KEY_BASE64}
-
-      # JVM Configuration
-      JVM_XMS: "512m"
-      JVM_XMX: "1024m"
-      JVM_GC: "G1GC"
+    env_file: .env
     depends_on:
       db:
         condition: service_healthy
     ports:
       - "8080:8080"
     restart: unless-stopped
+
+  tests:
+    build:
+      context: .
+      target: test
+    container_name: "bankcards-tests"
+    profiles: [test]
+    networks: [bankcards-network]
+    env_file: .env.test
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["mvn", "-B", "-DskipTests=false", "test"]
+    restart: no
 
 networks:
   bankcards-network:
