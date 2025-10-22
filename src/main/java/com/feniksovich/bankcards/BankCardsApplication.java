@@ -4,9 +4,11 @@ import com.feniksovich.bankcards.config.SecurityProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
-@EnableConfigurationProperties(SecurityProperties.class)
 @SpringBootApplication
+@EnableConfigurationProperties(SecurityProperties.class)
+@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class BankCardsApplication {
 
 	public static void main(String[] args) {
