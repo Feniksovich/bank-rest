@@ -16,6 +16,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Фабрика для генерации refresh-токенов с системными правами.
+ */
 @Component
 @Getter
 public class RefreshTokenFactory implements JwtTokenFactory {
@@ -32,6 +35,7 @@ public class RefreshTokenFactory implements JwtTokenFactory {
         this.expiration = securityProperties.refreshToken().expiration();
     }
 
+    /** {@inheritDoc} */
     @Override
     public JwtToken generate(UserPrincipal principal) {
         final Instant now = Instant.now();

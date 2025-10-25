@@ -7,6 +7,11 @@ import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
+/**
+ * Провайдер аутентификации с помощью JWT. Выполняет валидацию токена,
+ * проверяет срок действия и аутентифицирует пользователя в контексте безопасности.
+ * Реализован как компонент Spring Security.
+ */
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final ExtendedUserDetailsService userDetailsService;

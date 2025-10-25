@@ -18,6 +18,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.text.ParseException;
 
+/**
+ * Конфигурация JOSE-компонентов для сериализации/десериализации JWT.
+ */
 @Configuration
 public class JwtJoseComponentsConfigurer {
 
@@ -28,6 +31,9 @@ public class JwtJoseComponentsConfigurer {
         this.securityProperties = securityProperties;
     }
 
+    /**
+     * Сериализатор access-токена на основе Json Web Signature.
+     */
     @Bean
     public AccessTokenSerializer accessTokenJwsSerializer() throws JOSEException, ParseException {
         final OctetSequenceKey sequenceKey = OctetSequenceKey.parse(securityProperties.accessToken().jwk());
@@ -37,6 +43,9 @@ public class JwtJoseComponentsConfigurer {
         return new AccessTokenSerializer(signer, algorithm);
     }
 
+    /**
+     * Десериализатор access-токена на основе Json Web Signature.
+     */
     @Bean
     public AccessTokenDeserializer accessTokenJwsDeserializer() throws JOSEException, ParseException {
         final OctetSequenceKey sequenceKey = OctetSequenceKey.parse(securityProperties.accessToken().jwk());
@@ -45,6 +54,9 @@ public class JwtJoseComponentsConfigurer {
         return new AccessTokenDeserializer(verifier);
     }
 
+    /**
+     * Сериализатор refresh-токена на основе Json Web Encryption.
+     */
     @Bean
     public RefreshTokenSerializer refreshTokenJweSerializer() throws JOSEException, ParseException {
         final OctetSequenceKey sequenceKey = OctetSequenceKey.parse(securityProperties.refreshToken().jwk());
@@ -54,6 +66,9 @@ public class JwtJoseComponentsConfigurer {
         return new RefreshTokenSerializer(encrypter, algorithm);
     }
 
+    /**
+     * Десериализатор refresh-токена на основе Json Web Encryption.
+     */
     @Bean
     public RefreshTokenDeserializer refreshTokenJweDeserializer() throws JOSEException, ParseException {
         final OctetSequenceKey sequenceKey = OctetSequenceKey.parse(securityProperties.refreshToken().jwk());

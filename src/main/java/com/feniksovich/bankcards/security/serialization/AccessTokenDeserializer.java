@@ -11,6 +11,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Десериализация и верификация access-токенов с помощью JWS.
+ */
 public class AccessTokenDeserializer implements JwtTokenDeserializer {
 
     private final JWSVerifier verifier;

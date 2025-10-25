@@ -1,5 +1,8 @@
 package com.feniksovich.bankcards.util;
 
+/**
+ * Регулярные выражения, используемые валидацией DTO.
+ */
 public class RegexPatterns {
     public static final String PHONE_NUMBER = "[0-9]{10}";
     public static final String CARD_PAN_4 = "[0-9]{4}";

@@ -9,6 +9,9 @@ import lombok.*;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Сущность с мета-данными refresh-токена пользователя.
+ */
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

@@ -18,6 +18,7 @@ public class ExtendedUserDetailsServiceImpl implements ExtendedUserDetailsServic
         this.repository = repository;
     }
 
+    /** {@inheritDoc} */
     @Override
     public UserPrincipal loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
         return repository.findByPhoneNumber(phoneNumber)
@@ -25,6 +26,7 @@ public class ExtendedUserDetailsServiceImpl implements ExtendedUserDetailsServic
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
+    /** {@inheritDoc} */
     @Override
     public UserDetails loadUserById(UUID id) throws UsernameNotFoundException {
         return repository.findById(id)

@@ -4,6 +4,9 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import java.util.Objects;
 
+/**
+ * Токен аутентификации Spring Security, инкапсулирующий JwtToken.
+ */
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     private final JwtToken jwtToken;
@@ -16,10 +19,16 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         setAuthenticated(authenticated);
     }
 
+    /**
+     * Создает неаутентифицированный токен (без principal).
+     */
     public static JwtAuthenticationToken unauthenticated(JwtToken jwtToken) {
         return new JwtAuthenticationToken(jwtToken, null, false);
     }
 
+    /**
+     * Создает аутентифицированный токен с известным principal.
+     */
     public static JwtAuthenticationToken authenticated(JwtToken jwtToken, UserPrincipal principal) {
         return new JwtAuthenticationToken(jwtToken, principal, true);
     }

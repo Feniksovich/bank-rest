@@ -13,6 +13,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Десериализация и расшифровка refresh-токенов c помощью JWE.
+ */
 public class RefreshTokenDeserializer implements JwtTokenDeserializer {
 
     private final JWEDecrypter decrypter;

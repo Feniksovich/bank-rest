@@ -7,6 +7,9 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+/**
+ * Конвертер Instant -> ZonedDateTime для ModelMapper.
+ */
 public class InstantZonedDateTimeConverter implements Converter<Instant, ZonedDateTime> {
 
     private final ZoneId zoneId;

@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
         this.modelMapper = modelMapper;
     }
 
+    /** {@inheritDoc} */
     @Transactional
     public UserData register(SignUpRequest request) {
         if (repository.existsByPhoneNumber(request.getPhoneNumber())) {
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService {
         return modelMapper.map(repository.save(user), UserData.class);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public UserData getById(UUID id) {
@@ -55,6 +57,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(NOT_FOUND_EXCEPTION);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public UserData getByPhoneNumber(String phoneNumber) {
@@ -63,6 +66,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(NOT_FOUND_EXCEPTION);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public Page<UserData> getAll(Pageable pageable) {
@@ -70,6 +74,7 @@ public class UserServiceImpl implements UserService {
                 .map(user -> modelMapper.map(user, UserData.class));
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void updateById(UUID id, UserUpdateRequest request) {
@@ -78,6 +83,7 @@ public class UserServiceImpl implements UserService {
         repository.save(user);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void deleteById(UUID id) {

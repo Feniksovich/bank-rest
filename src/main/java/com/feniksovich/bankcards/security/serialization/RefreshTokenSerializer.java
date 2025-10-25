@@ -14,6 +14,9 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Шифрование и сериализация refresh-токенов с помощью JWE.
+ */
 public class RefreshTokenSerializer implements JwtTokenSerializer {
 
     private final JWEEncrypter encrypter;

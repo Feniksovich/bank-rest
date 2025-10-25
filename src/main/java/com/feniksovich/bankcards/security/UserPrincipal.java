@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.UUID;
 
+/**
+ * Реализация UserDetails для аутентифицированного пользователя.
+ */
 @AllArgsConstructor
 @Getter
 public class UserPrincipal implements UserDetails {
@@ -19,6 +22,9 @@ public class UserPrincipal implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
+    /**
+     * Создает principal из сущности пользователя.
+     */
     public static UserPrincipal of(User user) {
         return new UserPrincipal(
                 user.getId(),
@@ -28,6 +34,9 @@ public class UserPrincipal implements UserDetails {
         );
     }
 
+    /**
+     * Создает principal из DTO пользователя (без пароля).
+     */
     public static UserPrincipal of(UserData userData) {
         return new UserPrincipal(
                 userData.getId(),

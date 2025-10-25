@@ -10,6 +10,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.stereotype.Component;
 
+/**
+ * Конвертер строковых JWT-токенов в {@link JwtAuthenticationToken},
+ * переданных HTTP заголовке Authorization по схеме Bearer.
+ * Реализован как компонент Spring Security.
+ */
 @Component
 public class BearerJwtAuthenticationTokenConverter implements AuthenticationConverter {
 

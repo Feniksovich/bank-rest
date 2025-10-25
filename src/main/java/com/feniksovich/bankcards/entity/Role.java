@@ -11,6 +11,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
+/**
+ * Роли пользователей и их иерархия для Spring Security.
+ */
 public enum Role {
 
     USER(1, "ROLE_USER"),
@@ -26,6 +29,12 @@ public enum Role {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Строит иерархию ролей для Spring Security на основе приоритета ролей.
+     * Более высокий приоритет наследует права ролей с меньшим приоритетом.
+     *
+     * @return иерархия ролей
+     */
     public static RoleHierarchy hierarchy() {
         final Role[] roles = values();
         if (roles.length < 2) {

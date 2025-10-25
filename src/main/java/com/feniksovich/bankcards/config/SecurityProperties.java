@@ -5,6 +5,9 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 import java.time.Duration;
 
+/**
+ * Параметры безопасности приложения: JWK и сроки жизни токенов, ключ AES.
+ */
 @ConfigurationProperties(prefix = "security")
 public class SecurityProperties {
 

@@ -12,11 +12,17 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Подпись и сериализация access-токенов в строку с помощью JWS.
+ */
 public class AccessTokenSerializer implements JwtTokenSerializer {
 
     private final JWSSigner signer;
     private final JWSAlgorithm algorithm;
 
+    /**
+     * Создает сериализатор на основе алгоритма и подписанта JWS.
+     */
     public AccessTokenSerializer(JWSSigner signer, JWSAlgorithm algorithm) {
         this.signer = signer;
         this.algorithm = algorithm;

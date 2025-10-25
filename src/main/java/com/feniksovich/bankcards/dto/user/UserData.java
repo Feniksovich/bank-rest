@@ -13,6 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+/**
+ * DTO с публичными данными пользователя.
+ */
 public class UserData {
     private UUID id;
     private String lastName;

@@ -12,6 +12,7 @@ import java.time.ZonedDateTime;
 
 @Configuration
 public class ObjectMapperConfigurer {
+
     @Bean
     public ObjectMapper objectMapper() {
         final SimpleModule timeModule = new SimpleModule();

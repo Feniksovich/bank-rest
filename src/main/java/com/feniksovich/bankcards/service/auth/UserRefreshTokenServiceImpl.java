@@ -19,6 +19,7 @@ public class UserRefreshTokenServiceImpl implements UserRefreshTokenService {
         this.repository = repository;
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void track(JwtToken jwtToken) {
@@ -30,18 +31,21 @@ public class UserRefreshTokenServiceImpl implements UserRefreshTokenService {
         repository.save(userRefreshToken);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public boolean isTracked(JwtToken jwtToken) {
         return repository.existsById(jwtToken.id());
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void invalidate(JwtToken jwtToken) {
         repository.deleteById(jwtToken.id());
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void invalidateAll(UUID userId) {

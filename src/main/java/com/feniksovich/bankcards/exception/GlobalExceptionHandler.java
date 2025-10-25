@@ -16,6 +16,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+/**
+ * Глобальный обработчик исключений для REST API.
+ */
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {

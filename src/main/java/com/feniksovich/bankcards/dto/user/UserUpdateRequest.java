@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+/**
+ * Запрос на обновление данных пользователя.
+ */
 public class UserUpdateRequest {
     @NotBlank(message = "Last name is required")
     @Size(min = 2, max = 64)

@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Сериализатор ZonedDateTime в ISO-строку.
+ */
 public class ZonedDateTimeSerializer extends JsonSerializer<ZonedDateTime> {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_ZONED_DATE_TIME;

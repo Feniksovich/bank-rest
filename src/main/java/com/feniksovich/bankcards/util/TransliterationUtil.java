@@ -42,6 +42,12 @@ public class TransliterationUtil {
         TRANSLITERATION_MAP.put('Я', "YA");
     }
 
+    /**
+     * Выполняет транслитерацию и удаляет пробелы.
+     *
+     * @param cyrillicText текст на кириллице
+     * @return транслитерированный текст заглавными буквами
+     */
     public static String transliterate(String cyrillicText) {
         Objects.requireNonNull(cyrillicText, "cyrillicText");
         cyrillicText = cyrillicText.trim().toUpperCase();

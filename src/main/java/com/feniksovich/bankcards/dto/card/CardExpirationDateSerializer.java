@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Сериализатор даты истечения карты в формат MM/yy.
+ */
 public class CardExpirationDateSerializer extends JsonSerializer<LocalDate> {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MM/yy");

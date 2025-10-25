@@ -52,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
         this.refreshTokenSerializer = refreshTokenSerializer;
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public AuthResponse signUp(SignUpRequest request) {
@@ -60,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
         return issueTokensPair(principal);
     }
 
+    /** {@inheritDoc} */
     @Override
     public AuthResponse signIn(SignInRequest request) {
         final UsernamePasswordAuthenticationToken token =
@@ -69,6 +71,7 @@ public class AuthServiceImpl implements AuthService {
         return issueTokensPair(principal);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public void signOut(boolean globally) {
@@ -85,6 +88,7 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.clearContext();
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public AuthResponse refreshTokensPair() {
@@ -99,6 +103,13 @@ public class AuthServiceImpl implements AuthService {
         return issueTokensPair(principal);
     }
 
+    /**
+     * Выпускает и сериализует пару токенов для указанного пользователя,
+     * а также регистрирует refresh-токен в хранилище.
+     *
+     * @param principal аутентифицированный пользователь
+     * @return ответ с сериализованными токенами и сроками их действия
+     */
     private AuthResponse issueTokensPair(UserPrincipal principal) {
         final JwtToken accessToken = accessTokenFactory.generate(principal);
         final JwtToken refreshToken = refreshTokenFactory.generate(principal);

@@ -31,6 +31,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+/**
+ * Основная конфигурация Spring Security: фильтры, политики и бины безопасности.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -38,6 +41,9 @@ public class SecurityConfigurer {
 
     private static final int PASSWORD_ENCODER_BCRYPT_ROUNDS = 12;
 
+    /**
+     * Конфигурирует цепочку фильтров безопасности и правила авторизации.
+     */
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity httpSecurity,
@@ -73,16 +79,25 @@ public class SecurityConfigurer {
                 .build();
     }
 
+    /**
+     * Иерархия ролей (ADMIN > USER).
+     */
     @Bean
     public RoleHierarchy roleHierarchy() {
         return Role.hierarchy();
     }
 
+    /**
+     * Кодировщик паролей BCrypt.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(PASSWORD_ENCODER_BCRYPT_ROUNDS);
     }
 
+    /**
+     * Менеджер аутентификации с DAO и JWT провайдерами.
+     */
     @Bean
     public AuthenticationManager authenticationManager(
             PasswordEncoder passwordEncoder,
@@ -100,6 +115,9 @@ public class SecurityConfigurer {
         return new ProviderManager(daoAuthenticationProvider, jwtAuthenticationProvider);
     }
 
+    /**
+     * Сервис шифрования AES-GCM для хранения чувствительных данных.
+     */
     @Bean
     public CryptoService cryptoService(SecurityProperties securityProperties) {
         final String aesKeyBase64 = securityProperties.crypto().aesKeyBase64();

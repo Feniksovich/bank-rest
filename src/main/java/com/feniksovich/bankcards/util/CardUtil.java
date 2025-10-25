@@ -2,10 +2,18 @@ package com.feniksovich.bankcards.util;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Утилиты для работы с банковскими картами (генерация PAN по алгоритму Луна).
+ */
 public class CardUtil {
 
     private static final ThreadLocalRandom LOCAL_RANDOM = ThreadLocalRandom.current();
 
+    /**
+     * Генерирует валидный 16-значный PAN с контрольной суммой Луна.
+     *
+     * @return строка PAN
+     */
     public static String generateCardPan() {
         final int[] digits = new int[16];
         final int controlNumIndex = 15;

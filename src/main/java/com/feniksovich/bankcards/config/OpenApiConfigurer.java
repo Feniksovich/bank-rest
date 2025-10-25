@@ -14,12 +14,18 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+/**
+ * Конфигурация OpenAPI/Swagger для документирования REST API.
+ */
 @Slf4j
 @Configuration
 public class OpenApiConfigurer {
 
     private static final String SECURITY_REQUIREMENT_KEY = "Bearer Authentication";
 
+    /**
+     * Регистрирует резолвер моделей OpenAPI на основе ObjectMapper.
+     */
     @Bean
     public ModelResolver modelResolver(ObjectMapper objectMapper) {
         return new ModelResolver(objectMapper);
