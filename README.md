@@ -85,7 +85,7 @@ REST API для управления банковскими картами с с
 
 4. **Запустите приложение с помощью Docker Compose**:
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 Приложение будет доступно по адресу http://localhost:8080
@@ -99,7 +99,7 @@ REST API для управления банковскими картами с с
 
 2. **Запустите тесты с помощью профиля Docker Compose**:
    ```bash
-   docker-compose --profile test up --build --abort-on-container-exit
+   docker compose --profile test up --build --abort-on-container-exit
    ```
 
 ### Документация API
